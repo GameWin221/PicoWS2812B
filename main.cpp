@@ -44,7 +44,6 @@ static void on_packet_ready(const Packet& packet) {
                     g *= 16u;
                     b *= 16u;
 
-                    // led_matrix->setPixelColor(idx, PicoLed::RGB(r, g, b));
                     led_matrix->set_pixel(x, y, r, g, b);
                 }
             }
@@ -67,7 +66,7 @@ int main() {
     
     cyw43_arch_enable_sta_mode();
 
-    WS2812B led_controller(DATA_PIN, LEDBrightness::Quarter);
+    WS2812B led_controller(DATA_PIN, LEDBrightness::Half);
     led_matrix = &led_controller;
     led_matrix->fill(64, 0, 0);
     led_matrix->update_display();
