@@ -9,6 +9,7 @@
 - TCP used instead of HTTP for additional performance.
 - Seamless handling of client<->server connect / disconnect.
 - Readable code that can easily be used for learning purposes.
+- Images, Image sequences and GIFs can be stored in flash memory and played back offline with no interruptions.
 
 # Controller
 Any controller that uses **TCP sockets** and conforms to the **Packet Format** and the **Data Protocol** sections below will be compatible with the display. 
@@ -16,27 +17,18 @@ Any controller that uses **TCP sockets** and conforms to the **Packet Format** a
 Take a look at the [working example of a compatible controller](https://github.com/GameWin221/pico-ws2812b-controller)
 
 ## Data Protocol
-The controller must first connect to the Raspberry Pi Pico **via a TCP socket on port 4242**.
+The display receives packets through a TCP socket open on port 4242 by deafault. (It can be changed)
 
 1. Controller sends a valid packet (look at **Packet Format**) to the Pico W
 2. Controller waits for a response from the Pico W
-3. If the response reads exactly `"ACK"`, then the packet was sent succesfully
+3. If the response reads exactly `"ACK"`, then the whole packet was sent and received succesfully.
 
-After reading the correct response, the next packet can be sent immediately. The whole process typically takes about only 10ms depending on the network hardware.
+After reading the correct response, the next packet can be sent immediately.
 
 ## Packet Format
-```cpp
-struct Packet {
-    uint8_t data_type;
-    uint8_t data[];
-};
-```
+Take a look at the [packet.hpp](src/packet.hpp) file to see all packet types. Mind the [default C/C++ struct alignment](https://en.wikipedia.org/wiki/Data_structure_alignment#Typical_alignment_of_C_structs_on_x86). 
 
-The `data_type` field can be either 0x01 (DATA_TYPE_FULL) or 0x02 (DATA_TYPE_HALF) and the display will handle both types automatically. Any other value will be considered invalid.
-
-DATA_TYPE_FULL packet expects to carry **exactly** 16\*16\*3 (768) bytes of 8-bit per channel RGB data.
-
-DATA_TYPE_HALF packet expects to carry **exactly** 16\*16\*3/2 (384) bytes of tightly packed 4-bit per channel RGB data. This mode saves data in order to lower the network usage and decrease the delay.
+The first byte (`uint8_t`) of a received packet is always the `data_type` field. Each packet type has its own unique data type.
 
 RGB data is expected to be in the [row-major](https://en.wikipedia.org/wiki/Row-_and_column-major_order) order with (x:0, y:0) being the lower-left corner:
 ```
@@ -45,6 +37,20 @@ RGB data is expected to be in the [row-major](https://en.wikipedia.org/wiki/Row-
 (x:0; y:1), (x:1, y:1), ...
 (x:0; y:0), (x:1, y:0), ...
 ```
+
+8bpp (Full) RGB data layout:
+```
+data[0] , data[1] , data[2] , data[...]
+RRRRRRRR, GGGGGGGG, BBBBBBBB, ...
+```
+
+4bpp (Half) RGB data layout:
+```
+data[0] , data[1] , data[2] , data[...]
+RRRRGGGG, BBBBRRRR, GGGGBBBB, ...
+```
+
+
 ## Working Example
 The working example of a compatible controller can be found [here in this repository](https://github.com/GameWin221/pico-ws2812b-controller)
 

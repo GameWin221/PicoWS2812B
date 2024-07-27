@@ -3,6 +3,8 @@
 
 #include <hardware/pio.h>
 
+#include <pico/stdlib.h>
+
 // PIO interface based on the example: https://github.com/raspberrypi/pico-examples/blob/master/pio/ws2812/ws2812.c
 
 WS2812B::WS2812B(uint32_t data_pin, LEDBrightness brightness) : brightness_shift((uint8_t)brightness) {
@@ -19,6 +21,7 @@ void WS2812B::set_pixel(uint32_t x, uint32_t y, uint8_t r, uint8_t g, uint8_t b)
     data[i * 3u + 1u] = r;
     data[i * 3u + 2u] = b;
 }
+
 void WS2812B::fill(uint8_t r, uint8_t g, uint8_t b) {
     for(uint32_t i{}; i < 16u*16u; ++i) {
         data[i * 3u + 0u] = g;
@@ -39,5 +42,6 @@ void WS2812B::update_display() {
         pio_sm_put_blocking(pio0, 0u, color);
     }
 
-    sleep_us(50);
+    // sleep_us caused errors when update_display() wasn't called from the main thread
+    busy_wait_us(50);
 }

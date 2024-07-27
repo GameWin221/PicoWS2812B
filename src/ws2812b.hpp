@@ -1,9 +1,6 @@
-#ifndef WS2812B_HPP
-#define WS2812B_HPP
+#ifndef _WS2812B_HPP
+#define _WS2812B_HPP
 
-#include <pico/stdlib.h>
-#include <pico/time.h>
-#include <hardware/timer.h>
 #include <cstdint>
 
 enum struct LEDBrightness : uint8_t {
@@ -23,9 +20,8 @@ public:
     void update_display();
 
 private:
-    uint8_t data[16*16*3]{};
-
-    const uint8_t brightness_shift;
+    uint8_t data[16u*16u*3u]{};
+    uint8_t brightness_shift{};
 };
 
 
