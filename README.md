@@ -54,6 +54,21 @@ RRRRGGGG, BBBBRRRR, GGGGBBBB, ...
 ## Working Example
 The working example of a compatible controller can be found [here in this repository](https://github.com/GameWin221/pico-ws2812b-controller)
 
+# Build
+## Prerequisites
+- Native GNU C++ compiler [(for example MinGW)](https://winlibs.com/) that is added to PATH
+- [ARM GNU Toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads) and the `PICO_TOOLCHAIN_PATH` environmental variable.
+- [Pico SDK](https://github.com/raspberrypi/pico-sdk) and the `PICO_SDK_PATH` environmental variable.
+
+## Command
+Once the prerequisites are satisfied, run the following command:
+```
+cmake -G "MinGW Makefiles" .. 
+make (ming32-make on Windows)
+```
+
+And copy the built .uf2 file to your Pico's Mass Storage
+
 # Power Consumption
 **Please double-check if your power supply can safely provide enough current at 5V. Note that not every WS2812B draws the same amount of current.**
 
