@@ -63,6 +63,9 @@ The working example of a compatible controller can be found [here in this reposi
 ## Command
 Once the prerequisites are satisfied, run the following command:
 ```
+mkdir build
+cd build
+
 cmake -G "MinGW Makefiles" .. 
 make (ming32-make on Windows)
 ```
